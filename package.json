@@ -1,0 +1,34 @@
+{
+	"name": "animation-observer",
+	"version": "0.0.0",
+	"description": "Lightweight module to monitor DOM elements matching a CSS selector",
+	"scripts": {
+		"build": "tsc",
+		"lint": "xo",
+		"prepack": "npm run build",
+		"test": "playwright test"
+	},
+	"repository": "kidonng/animation-observer",
+	"license": "MIT",
+	"author": "Kid <hi@xuann.wang> (https://xuann.wang/)",
+	"type": "module",
+	"main": "index.js",
+	"module": "index.js",
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"xo": {
+		"prettier": true,
+		"semicolon": false
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.24.2",
+		"@sindresorhus/tsconfig": "^3.0.1",
+		"playwright": "^1.24.2",
+		"typed-query-selector": "^2.6.1",
+		"typescript": "^4.7.4",
+		"vite": "^3.0.4",
+		"xo": "^0.51.0"
+	}
+}
