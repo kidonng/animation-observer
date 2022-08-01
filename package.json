@@ -6,7 +6,7 @@
 		"build": "tsc",
 		"lint": "xo",
 		"prepack": "npm run build",
-		"test": "npx -y playwright install && npx -y playwright test"
+		"test": "npx playwright test"
 	},
 	"repository": "kidonng/animation-observer",
 	"license": "MIT",

@@ -36,4 +36,7 @@ jobs:
           node-version: 16
           cache: npm
       - run: npm ci
+      - run: |
+          npx playwright install
+          sudo npx playwright install-deps
       - run: npm test
