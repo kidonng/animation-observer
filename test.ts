@@ -10,10 +10,12 @@ const config: InlineConfig = {
 	logLevel: 'silent',
 }
 
-test('YOLO', async ({page}) => {
-	await build(config)
-	const server = await preview(config)
-	await page.goto(server.resolvedUrls.local[0])
+await build(config)
+const server = await preview(config)
+const url = server.resolvedUrls.local[0]
+
+test('Basic', async ({page}) => {
+	await page.goto(url)
 
 	await page.evaluate(async () => {
 		const observer = observe('div', (element) => {
@@ -36,10 +38,50 @@ test('YOLO', async ({page}) => {
 		document.body.append(div2)
 	})
 
+	// Should work
 	const body = page.locator('body')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('div1')
 
+	// Should properly cleanup
+	const style = page.locator('style')
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	expect(await style.count()).toBe(0)
+})
+
+test('Options', async ({page}) => {
+	await page.goto(url)
+
+	await page.evaluate(async () => {
+		const controller = new AbortController()
+		observe(
+			'div',
+			(element) => {
+				document.body.classList.add(element.id)
+			},
+			{signal: controller.signal},
+		)
+
+		const div1 = document.createElement('div')
+		div1.id = 'div1'
+		document.body.append(div1)
+
+		await new Promise((resolve) => {
+			setTimeout(resolve, 1000)
+		})
+		controller.abort()
+
+		const div2 = document.createElement('div')
+		div2.id = 'div2'
+		document.body.append(div2)
+	})
+
+	// Should work
+	const body = page.locator('body')
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(body).toHaveClass('div1')
+
+	// Should properly cleanup
 	const style = page.locator('style')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.count()).toBe(0)

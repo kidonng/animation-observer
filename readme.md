@@ -10,22 +10,39 @@ npm install animation-observer
 
 ## Usage
 
-### `observe(selector, callback)`
-
-Returns a [`AbortController`](https://developer.mozilla.org/docs/Web/API/AbortController).
-
 ```js
 import {observe} from 'animation-observer'
 
 observe('div', (element) => {
-	element.classList.add('awesome-class')
+	console.log(element.id, 'just slid into the DOM.')
+})
+```
+
+### Stop the observer
+
+The function returns a [`AbortController`](https://developer.mozilla.org/docs/Web/API/AbortController), which can be used to stop the observer.
+
+```js
+const observer = observe('a', () => {
+	console.log('A wild link appeared.')
 })
 
-const observer = observe('.ad', (element) => {
-	element.remove()
-})
-// Stop the observer
 observer.abort()
+```
+
+### Bring Your Own [`AbortSignal`](https://developer.mozilla.org/docs/Web/API/AbortSignal)
+
+You can also pass a `signal` in the options.
+
+<!-- prettier-ignore -->
+```js
+const controller = new AbortController()
+
+observe('img', () => {
+	console.log('An image just showed up!')
+}, {signal: controller.signal})
+
+controller.abort()
 ```
 
 ## Browser support

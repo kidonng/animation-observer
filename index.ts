@@ -6,8 +6,15 @@ export function observe<
 	TElement extends Element = ParseSelector<Selector, HTMLElement>,
 >(
 	selector: Selector | Selector[],
-	callback: (element: TElement) => void,
+	initialize: (element: TElement) => void,
+	options?: {signal?: AbortSignal},
 ): AbortController {
+	const controller = new AbortController()
+	if (options?.signal?.aborted) {
+		controller.abort()
+		return controller
+	}
+
 	const name = `animation-observer-${Math.random().toString(36).slice(2)}`
 
 	const style = document.createElement('style')
@@ -21,8 +28,7 @@ export function observe<
 	`
 	document.head.append(style)
 
-	const controller = new AbortController()
-	const {signal} = controller
+	const signal = options?.signal ?? controller.signal
 	document.addEventListener(
 		'animationstart',
 		(event) => {
@@ -30,7 +36,7 @@ export function observe<
 				return
 			}
 
-			callback(event.target as TElement)
+			initialize(event.target as TElement)
 		},
 		{signal},
 	)
