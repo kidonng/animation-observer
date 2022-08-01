@@ -30,6 +30,39 @@ const observer = observe('a', () => {
 observer.abort()
 ```
 
+### Listen to different events
+
+By default, the function listens to the [`animationstart`](https://developer.mozilla.org/docs/Web/API/Element/animationstart_event) event, which triggers when a matching element appears.
+
+You can listen to a different `event` in the options. The most prominent usage is to check element removals:
+
+<!-- prettier-ignore -->
+```js
+observe('div', (element) => {
+	console.log(element.id, 'left the party.')
+}, {
+	event: 'cancel', // `animationcancel`
+})
+```
+
+Or execute a function after a `duration`:
+
+<!-- prettier-ignore -->
+```js
+observe('input:focus', () => {
+	alert('Please fill in your answer quickly.')
+}, {
+	event: 'end', // `animationend`
+	duration: '10s',
+})
+```
+
+`duration` has different meaning depending on `event`:
+
+- For `start`, it does nothing
+- For `end`, it is a delay
+- For `cancel`, it is a timeout (default: `9999s` a.k.a "infinity")
+
 ### Bring Your Own [`AbortSignal`](https://developer.mozilla.org/docs/Web/API/AbortSignal)
 
 You can also pass a `signal` in the options.

@@ -29,7 +29,7 @@ test('Basic', async ({page}) => {
 		// Give listener some time to do its thing
 		// Strangely, this throws if put into fixture
 		await new Promise((resolve) => {
-			setTimeout(resolve, 1000)
+			setTimeout(resolve, 1e3)
 		})
 		observer.abort()
 
@@ -38,18 +38,83 @@ test('Basic', async ({page}) => {
 		document.body.append(div2)
 	})
 
-	// Should work
 	const body = page.locator('body')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('div1')
 
-	// Should properly cleanup
 	const style = page.locator('style')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.count()).toBe(0)
 })
 
-test('Options', async ({page}) => {
+test('End event', async ({page}) => {
+	await page.goto(url)
+	const body = page.locator('body')
+
+	await page.evaluate(() => {
+		observe(
+			'div',
+			() => {
+				document.body.classList.add('working')
+			},
+			{
+				event: 'end',
+				duration: '2s',
+			},
+		)
+
+		document.body.append(document.createElement('div'))
+	})
+
+	await new Promise((resolve) => {
+		setTimeout(resolve, 1e3)
+	})
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(body).not.toHaveClass('working')
+
+	await new Promise((resolve) => {
+		setTimeout(resolve, 2e3)
+	})
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(body).toHaveClass('working')
+})
+
+test('Cancel event', async ({page}) => {
+	await page.goto(url)
+	const body = page.locator('body')
+
+	await page.evaluate(() => {
+		observe(
+			'div',
+			() => {
+				document.body.classList.add('working')
+			},
+			{
+				event: 'cancel',
+			},
+		)
+
+		document.body.append(document.createElement('div'))
+	})
+
+	await new Promise((resolve) => {
+		setTimeout(resolve, 1e3)
+	})
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(body).not.toHaveClass('working')
+
+	await page.evaluate(() => {
+		document.querySelector('div')!.remove()
+	})
+
+	await new Promise((resolve) => {
+		setTimeout(resolve, 1e3)
+	})
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(body).toHaveClass('working')
+})
+
+test('Signal', async ({page}) => {
 	await page.goto(url)
 
 	await page.evaluate(async () => {
@@ -67,7 +132,7 @@ test('Options', async ({page}) => {
 		document.body.append(div1)
 
 		await new Promise((resolve) => {
-			setTimeout(resolve, 1000)
+			setTimeout(resolve, 1e3)
 		})
 		controller.abort()
 
@@ -76,12 +141,10 @@ test('Options', async ({page}) => {
 		document.body.append(div2)
 	})
 
-	// Should work
 	const body = page.locator('body')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('div1')
 
-	// Should properly cleanup
 	const style = page.locator('style')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.count()).toBe(0)

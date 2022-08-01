@@ -1,5 +1,12 @@
 import type {ParseSelector} from 'typed-query-selector/parser.js'
 
+export interface ObserveOptions {
+	event?: 'start' | 'end' | 'cancel'
+	duration?: string
+	signal?: AbortSignal
+	name?: string
+}
+
 export function observe<
 	Selector extends string,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -7,7 +14,7 @@ export function observe<
 >(
 	selector: Selector | Selector[],
 	initialize: (element: TElement) => void,
-	options?: {signal?: AbortSignal; name?: string},
+	options?: ObserveOptions,
 ): AbortController {
 	const controller = new AbortController()
 	if (options?.signal?.aborted) {
@@ -15,7 +22,12 @@ export function observe<
 		return controller
 	}
 
-	const name = options?.name ?? `animation-observer-${crypto.randomUUID()}`
+	const {
+		event = 'start',
+		duration = event === 'cancel' ? '9999s' : '0s',
+		signal = controller.signal,
+		name = `animation-observer-${crypto.randomUUID()}`,
+	}: ObserveOptions = options ?? {}
 
 	const style = document.createElement('style')
 	style.innerHTML = /* css */ `
@@ -24,19 +36,31 @@ export function observe<
 
 		${Array.isArray(selector) ? selector.join(',') : selector} {
 			animation-name: ${name};
+			animation-duration: ${duration};
 		}
 	`
 	document.head.append(style)
 
-	const signal = options?.signal ?? controller.signal
 	document.addEventListener(
-		'animationstart',
-		(event) => {
-			if (event.animationName !== name) {
+		`animation${event === 'cancel' ? 'start' : event}`,
+		(rootEvent) => {
+			if (rootEvent.animationName !== name) {
 				return
 			}
 
-			initialize(event.target as TElement)
+			const element = rootEvent.target as TElement
+			// `animationcancel` does not bubble
+			if (event === 'cancel') {
+				element.addEventListener(
+					'animationcancel',
+					() => {
+						initialize(element)
+					},
+					{signal},
+				)
+			} else {
+				initialize(element)
+			}
 		},
 		{signal},
 	)
