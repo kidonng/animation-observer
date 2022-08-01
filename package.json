@@ -1,6 +1,6 @@
 {
 	"name": "animation-observer",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Lightweight module to monitor DOM elements matching a CSS selector",
 	"scripts": {
 		"build": "tsc",
