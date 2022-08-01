@@ -7,7 +7,7 @@ export function observe<
 >(
 	selector: Selector | Selector[],
 	initialize: (element: TElement) => void,
-	options?: {signal?: AbortSignal},
+	options?: {signal?: AbortSignal; name?: string},
 ): AbortController {
 	const controller = new AbortController()
 	if (options?.signal?.aborted) {
@@ -15,7 +15,7 @@ export function observe<
 		return controller
 	}
 
-	const name = `animation-observer-${Math.random().toString(36).slice(2)}`
+	const name = options?.name ?? `animation-observer-${crypto.randomUUID()}`
 
 	const style = document.createElement('style')
 	style.innerHTML = /* css */ `

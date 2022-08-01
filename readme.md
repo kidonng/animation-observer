@@ -40,9 +40,26 @@ const controller = new AbortController()
 
 observe('img', () => {
 	console.log('An image just showed up!')
-}, {signal: controller.signal})
+}, {
+	signal: controller.signal,
+})
 
 controller.abort()
+```
+
+### Custom animation name
+
+By default, the function generates a random animation name using [`crypto.randomUUID()`](https://developer.mozilla.org/docs/Web/API/Crypto/randomUUID), which has a slightly lower [browser support](#browser-support).
+
+You can specify a custom animation `name` in the options:
+
+<!-- prettier-ignore -->
+```js
+observe('[href="https://www.random.org/"]', () => {
+	console.log('True randomness™️')
+}, {
+	name: Math.random().toString(36).slice(2),
+})
 ```
 
 ## Browser support
