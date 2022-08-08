@@ -1,3 +1,4 @@
+import {env} from 'node:process'
 import {type InlineConfig, build, preview} from 'vite'
 import {test, expect} from '@playwright/test'
 // Only for types, not actually used
@@ -15,6 +16,9 @@ const server = await preview(config)
 const url = server.resolvedUrls.local[0]
 
 test('Basic', async ({page, browserName}) => {
+	// Flaky on Safari
+	if (env.CI && browserName === 'webkit') test.skip()
+
 	await page.goto(url)
 	const body = page.locator('body')
 
