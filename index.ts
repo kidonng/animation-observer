@@ -7,6 +7,25 @@ export interface ObserveOptions {
 	name?: string
 }
 
+const namespace = 'animation-observer'
+let hasKeyframes = false
+
+function appendStyle(style: string) {
+	const element = document.createElement('style')
+	element.innerHTML = style
+	document.head.append(element)
+	return element
+}
+
+function addKeyframes() {
+	if (hasKeyframes) return
+	hasKeyframes = true
+
+	appendStyle(/* css */ `
+		@keyframes ${namespace} {}
+	`)
+}
+
 export function observe<
 	Selector extends string,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -26,41 +45,38 @@ export function observe<
 		event = 'start',
 		duration = event === 'cancel' ? '9999s' : '0s',
 		signal = controller.signal,
-		name = `animation-observer-${crypto.randomUUID()}`,
+		name = `${namespace}-${crypto.randomUUID()}`,
 	}: ObserveOptions = options ?? {}
+	const selectorString = String(selector)
 
-	const style = document.createElement('style')
-	style.innerHTML = /* css */ `
-		@keyframes ${name} {
-		}
-
-		@layer ${name} {
-			${Array.isArray(selector) ? selector.join(',') : selector} {
-				animation-name: ${name};
+	addKeyframes()
+	const style = appendStyle(/* css */ `
+		@layer ${namespace} {
+			${selectorString}:not(.${name}) {
+				animation-name: ${namespace};
 				animation-duration: ${duration};
 			}
 		}
-	`
-	document.head.append(style)
+	`)
 
 	document.addEventListener(
 		`animation${event === 'cancel' ? 'start' : event}`,
 		(rootEvent) => {
-			if (rootEvent.animationName !== name) {
-				return
-			}
-
 			const element = rootEvent.target as TElement
+			if (!element.matches(selectorString)) return
+
 			// `animationcancel` does not bubble
 			if (event === 'cancel') {
 				element.addEventListener(
 					'animationcancel',
 					() => {
+						element.classList.add(name)
 						initialize(element)
 					},
 					{signal},
 				)
 			} else {
+				element.classList.add(name)
 				initialize(element)
 			}
 		},

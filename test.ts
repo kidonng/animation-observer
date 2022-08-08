@@ -47,8 +47,29 @@ test('Basic', async ({page, browserName}) => {
 	await expect(body).toHaveClass('div1')
 
 	const style = page.locator('style')
+	// Only one global animation <style> should be left
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	expect(await style.count()).toBe(0)
+	expect(await style.count()).toBe(1)
+})
+
+test('Multiple', async ({page}) => {
+	await page.goto(url)
+
+	await page.evaluate(() => {
+		observe('div', () => {
+			document.body.classList.add('class1')
+		})
+		observe('div', () => {
+			document.body.classList.add('class2')
+		})
+
+		document.body.append(document.createElement('div'))
+	})
+
+	await page.waitForTimeout(1e3)
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(page.locator('body')).toHaveClass('class1 class2')
 })
 
 test('End event', async ({page}) => {
@@ -143,5 +164,29 @@ test('Signal', async ({page}) => {
 
 	const style = page.locator('style')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	expect(await style.count()).toBe(0)
+	expect(await style.count()).toBe(1)
+})
+
+test('@layer', async ({page}) => {
+	await page.goto(url)
+
+	await page.evaluate(() => {
+		observe('div', (element) => {
+			document.body.classList.add(element.id)
+		})
+
+		const div1 = document.createElement('div')
+		div1.id = 'div1'
+
+		const div2 = document.createElement('div')
+		div2.id = 'div2'
+		div2.style.animationName = 'test'
+
+		document.body.append(div1, div2)
+	})
+
+	await page.waitForTimeout(1e3)
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(page.locator('body')).toHaveClass('div1')
 })
