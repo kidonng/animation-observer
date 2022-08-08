@@ -32,9 +32,9 @@ observer.abort()
 
 ### Listen to different events
 
-By default, the function listens to the [`animationstart`](https://developer.mozilla.org/docs/Web/API/Element/animationstart_event) event, which triggers when a matching element appears.
+By default, the function listens to the [`animationstart`](https://developer.mozilla.org/docs/Web/API/Element/animationstart_event) event, which triggers when a matching element ["appears"](#caveats).
 
-You can listen to a different `event` in the options. The most prominent usage is to check element removals:
+You can listen to a different `event` in the options. The most prominent usage is to check element ["disappears"](#caveats):
 
 <!-- prettier-ignore -->
 ```js
@@ -80,9 +80,19 @@ observe('img', () => {
 controller.abort()
 ```
 
-### Custom animation name
+### Caveats
 
-By default, the function generates a random animation name using [`crypto.randomUUID()`](https://developer.mozilla.org/docs/Web/API/Crypto/randomUUID), which has a slightly lower [browser support](#browser-support).
+- By "appearing", it means `animationstart` and `animationend` events are fired when the element meets the following conditions:
+  - Element matches the selector
+  - Element is not `display: none` (`visibility: hidden` is fine)
+- By "disappearing", it means `animationcancel` event is fired when one of the following happens:
+  - Element no longer matches the selector (may still be in the DOM)
+  - Element is removed from the DOM
+  - Element becomes `display: none`
+
+### Custom name
+
+By default, the function generates a random name for animation and layer using [`crypto.randomUUID()`](https://developer.mozilla.org/docs/Web/API/Crypto/randomUUID).
 
 You can specify a custom animation `name` in the options:
 
@@ -97,11 +107,15 @@ observe('[href="https://www.random.org/"]', () => {
 
 ## Browser support
 
-This module uses the [`signal`](https://developer.mozilla.org/docs/Web/API/EventTarget/addEventListener#signal) option of `EventTarget.addEventListener()`, which is supported since:
+This module uses CSS [`@layer`](https://developer.mozilla.org/docs/Web/CSS/@layer) to avoid conflicting with existing styles, which is supported since:
 
-- Chrome & Edge 90
-- Firefox 86
-- Safari 15
+- Chrome & Edge 99
+- Firefox 97
+- Safari 15.4
+
+## Credits
+
+This idea is brought up by [@fregante](https://github.com/refined-github/refined-github/issues/5874#issuecomment-1200341987).
 
 ## See Also
 

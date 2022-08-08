@@ -34,9 +34,11 @@ export function observe<
 		@keyframes ${name} {
 		}
 
-		${Array.isArray(selector) ? selector.join(',') : selector} {
-			animation-name: ${name};
-			animation-duration: ${duration};
+		@layer ${name} {
+			${Array.isArray(selector) ? selector.join(',') : selector} {
+				animation-name: ${name};
+				animation-duration: ${duration};
+			}
 		}
 	`
 	document.head.append(style)
