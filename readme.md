@@ -94,7 +94,7 @@ controller.abort()
 
 By default, the function generates a random name for animation and layer using [`crypto.randomUUID()`](https://developer.mozilla.org/docs/Web/API/Crypto/randomUUID).
 
-You can specify a custom animation `name` in the options:
+You can specify a custom `name` in the options:
 
 <!-- prettier-ignore -->
 ```js

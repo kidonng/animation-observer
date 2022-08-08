@@ -1,4 +1,4 @@
-import {setTimeout} from 'node:timers/promises'
+import {env} from 'node:process'
 import {type InlineConfig, build, preview} from 'vite'
 import {test, expect} from '@playwright/test'
 // Only for types, not actually used
@@ -15,7 +15,10 @@ await build(config)
 const server = await preview(config)
 const url = server.resolvedUrls.local[0]
 
-test('Basic', async ({page}) => {
+test('Basic', async ({page, browserName}) => {
+	// Flaky on Safari
+	if (env.CI && browserName === 'webkit') test.fail()
+
 	await page.goto(url)
 	const body = page.locator('body')
 
@@ -67,11 +70,11 @@ test('End event', async ({page}) => {
 		document.body.append(document.createElement('div'))
 	})
 
-	await setTimeout(1e3)
+	await page.waitForTimeout(1e3)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).not.toHaveClass('working')
 
-	await setTimeout(2e3)
+	await page.waitForTimeout(2e3)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('working')
 })
@@ -94,7 +97,7 @@ test('Cancel event', async ({page}) => {
 		document.body.append(document.createElement('div'))
 	})
 
-	await setTimeout(1e3)
+	await page.waitForTimeout(1e3)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).not.toHaveClass('working')
 
@@ -102,7 +105,7 @@ test('Cancel event', async ({page}) => {
 		document.querySelector('div')!.remove()
 	})
 
-	await setTimeout(1e3)
+	await page.waitForTimeout(1e3)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('working')
 })
