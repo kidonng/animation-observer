@@ -52,7 +52,7 @@ test('Basic', async ({page, browserName}) => {
 	expect(await style.evaluate((style) => style.childNodes.length)).toBe(1)
 })
 
-test('Multiple listeners', async ({page}) => {
+test('Multiple listeners (:not)', async ({page}) => {
 	await page.goto(url)
 
 	await page.evaluate(() => {
@@ -76,6 +76,40 @@ test('Multiple listeners', async ({page}) => {
 	expect(await style.count()).toBe(1)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.evaluate((style) => style.childNodes.length)).toBe(3)
+})
+
+test('Multiple selectors (:where)', async ({page}) => {
+	await page.goto(url)
+
+	await page.evaluate(async () => {
+		observe(['#div1', '#div2'], (element) => {
+			document.body.classList.add(element.id)
+		})
+
+		const div1 = document.createElement('div')
+		div1.id = 'div1'
+
+		const div2 = document.createElement('div')
+		div2.id = 'div2'
+
+		document.body.append(div1, div2)
+
+		await new Promise((resolve) => {
+			window.setTimeout(resolve, 1e3)
+		})
+
+		document.body.classList.remove('div1')
+		div1.id = 'div'
+
+		await new Promise((resolve) => {
+			window.setTimeout(resolve, 1e3)
+		})
+
+		div1.id = 'div1'
+	})
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	await expect(page.locator('body')).toHaveClass('div2')
 })
 
 test('End event', async ({page}) => {

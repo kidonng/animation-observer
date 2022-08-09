@@ -46,7 +46,7 @@ export function observe<
 	createStyle()
 	const rule = new Text(/* css */ `
 		@layer ${namespace} {
-			${selectorString}:not(.${name}) {
+			:where(${selectorString}):not(.${name}) {
 				animation-name: ${namespace};
 				animation-duration: ${duration};
 			}
