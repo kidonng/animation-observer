@@ -115,7 +115,9 @@ This module uses CSS [`@layer`](https://developer.mozilla.org/docs/Web/CSS/@laye
 
 ## Credits
 
-This idea is brought up by [@fregante](https://github.com/refined-github/refined-github/issues/5874#issuecomment-1200341987).
+The first prototype is inspired by [@fregante](https://github.com/refined-github/refined-github/issues/5874#issuecomment-1200341987).
+
+Support for multiple listeners matching the same element in [v2.1.0](https://github.com/kidonng/animation-observer/releases/tag/v2.1.0) is adapted from [Refined GitHub](https://github.com/refined-github/refined-github/pull/5886/files#diff-4512860ff8f9959a9b0b03bf0fc10f6bf704930bb48148d04c6a70ff8d500629).
 
 ## See Also
 
