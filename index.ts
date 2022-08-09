@@ -8,22 +8,16 @@ export interface ObserveOptions {
 }
 
 const namespace = 'animation-observer'
-let hasKeyframes = false
+let style: HTMLStyleElement
 
-function appendStyle(style: string) {
-	const element = document.createElement('style')
-	element.innerHTML = style
-	document.head.append(element)
-	return element
-}
+function createStyle() {
+	if (style) return
 
-function addKeyframes() {
-	if (hasKeyframes) return
-	hasKeyframes = true
-
-	appendStyle(/* css */ `
+	style = document.createElement('style')
+	style.append(/* css */ `
 		@keyframes ${namespace} {}
 	`)
+	document.head.append(style)
 }
 
 export function observe<
@@ -49,8 +43,8 @@ export function observe<
 	}: ObserveOptions = options ?? {}
 	const selectorString = String(selector)
 
-	addKeyframes()
-	const style = appendStyle(/* css */ `
+	createStyle()
+	const rule = new Text(/* css */ `
 		@layer ${namespace} {
 			${selectorString}:not(.${name}) {
 				animation-name: ${namespace};
@@ -58,6 +52,7 @@ export function observe<
 			}
 		}
 	`)
+	style.append(rule)
 
 	document.addEventListener(
 		`animation${event === 'cancel' ? 'start' : event}`,
@@ -83,7 +78,7 @@ export function observe<
 		{signal},
 	)
 	signal.addEventListener('abort', () => {
-		style.remove()
+		rule.remove()
 	})
 
 	return controller

@@ -49,10 +49,10 @@ test('Basic', async ({page, browserName}) => {
 	const style = page.locator('style')
 	// Only one global animation <style> should be left
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	expect(await style.count()).toBe(1)
+	expect(await style.evaluate((style) => style.childNodes.length)).toBe(1)
 })
 
-test('Multiple', async ({page}) => {
+test('Multiple listeners', async ({page}) => {
 	await page.goto(url)
 
 	await page.evaluate(() => {
@@ -70,6 +70,12 @@ test('Multiple', async ({page}) => {
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(page.locator('body')).toHaveClass('class1 class2')
+
+	const style = page.locator('style')
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	expect(await style.count()).toBe(1)
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	expect(await style.evaluate((style) => style.childNodes.length)).toBe(3)
 })
 
 test('End event', async ({page}) => {
@@ -164,7 +170,7 @@ test('Signal', async ({page}) => {
 
 	const style = page.locator('style')
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	expect(await style.count()).toBe(1)
+	expect(await style.evaluate((style) => style.childNodes.length)).toBe(1)
 })
 
 test('@layer', async ({page}) => {
