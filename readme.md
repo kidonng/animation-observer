@@ -18,6 +18,23 @@ observe('div', (element) => {
 })
 ```
 
+## API
+
+```ts
+declare function observe(
+	selector: string | string[],
+	initialize: (element: Element) => void,
+	options?: {
+		event?: 'start' | 'end' | 'cancel'
+		duration?: string
+		signal?: AbortSignal
+		name?: string
+	},
+): AbortController
+```
+
+## Recipes
+
 ### Stop the observer
 
 The function returns a [`AbortController`](https://developer.mozilla.org/docs/Web/API/AbortController), which can be used to stop the observer.
