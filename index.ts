@@ -28,22 +28,16 @@ export function observe<
 	selector: Selector | Selector[],
 	initialize: (element: TElement) => void,
 	options?: ObserveOptions,
-): AbortController {
-	const controller = new AbortController()
-	if (options?.signal?.aborted) {
-		controller.abort()
-		return controller
-	}
-
+): void {
 	const {
 		event = 'start',
 		duration = event === 'cancel' ? '9999s' : '0s',
-		signal = controller.signal,
+		signal,
 		name = `${namespace}-${crypto.randomUUID()}`,
 	}: ObserveOptions = options ?? {}
-	const selectorString = String(selector)
+	if (signal?.aborted) return
 
-	createStyle()
+	const selectorString = String(selector)
 	const rule = new Text(/* css */ `
 		@layer ${namespace} {
 			:where(${selectorString}):not(.${name}) {
@@ -51,7 +45,8 @@ export function observe<
 				animation-duration: ${duration};
 			}
 		}
-	`)
+		`)
+	createStyle()
 	style.append(rule)
 
 	document.addEventListener(
@@ -77,9 +72,7 @@ export function observe<
 		},
 		{signal},
 	)
-	signal.addEventListener('abort', () => {
+	signal?.addEventListener('abort', () => {
 		rule.remove()
 	})
-
-	return controller
 }

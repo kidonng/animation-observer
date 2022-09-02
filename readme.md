@@ -37,14 +37,19 @@ declare function observe(
 
 ### Stop the observer
 
-The function returns a [`AbortController`](https://developer.mozilla.org/docs/Web/API/AbortController), which can be used to stop the observer.
+You can pass a [`AbortSignal`](https://developer.mozilla.org/docs/Web/API/AbortSignal) to the `signal` option.
 
+<!-- prettier-ignore -->
 ```js
-const observer = observe('a', () => {
-	console.log('A wild link appeared.')
+const controller = new AbortController()
+
+observe('img', () => {
+	console.log('An image just showed up!')
+}, {
+	signal: controller.signal,
 })
 
-observer.abort()
+controller.abort()
 ```
 
 ### Listen to different events
@@ -79,23 +84,6 @@ observe('input:focus', () => {
 - For `start`, it does nothing
 - For `end`, it is a delay
 - For `cancel`, it is a timeout (default: `9999s` a.k.a "infinity")
-
-### Bring Your Own [`AbortSignal`](https://developer.mozilla.org/docs/Web/API/AbortSignal)
-
-You can also pass a `signal` in the options.
-
-<!-- prettier-ignore -->
-```js
-const controller = new AbortController()
-
-observe('img', () => {
-	console.log('An image just showed up!')
-}, {
-	signal: controller.signal,
-})
-
-controller.abort()
-```
 
 ### Caveats
 

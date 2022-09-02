@@ -23,33 +23,21 @@ test('Basic', async ({page, browserName}) => {
 	const body = page.locator('body')
 
 	await page.evaluate(async () => {
-		const observer = observe('div', (element) => {
+		observe('div', (element) => {
 			document.body.classList.add(element.id)
 		})
 
-		const div1 = document.createElement('div')
-		div1.id = 'div1'
-		document.body.append(div1)
-
-		// Give listener some time to do its thing
-		// Strangely, this throws if put into fixture
-		await new Promise((resolve) => {
-			window.setTimeout(resolve, 1e3)
-		})
-		observer.abort()
-
-		const div2 = document.createElement('div')
-		div2.id = 'div2'
-		document.body.append(div2)
+		const div = document.createElement('div')
+		div.id = 'div'
+		document.body.append(div)
 	})
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	await expect(body).toHaveClass('div1')
+	await expect(body).toHaveClass('div')
 
 	const style = page.locator('style')
-	// Only one global animation <style> should be left
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-	expect(await style.evaluate((style) => style.childNodes.length)).toBe(1)
+	expect(await style.evaluate((style) => style.childNodes.length)).toBe(2)
 })
 
 test('Multiple listeners (:not)', async ({page}) => {
@@ -94,6 +82,8 @@ test('Multiple selectors (:where)', async ({page}) => {
 
 		document.body.append(div1, div2)
 
+		// Give listener some time to do its thing
+		// Strangely, this throws if put into fixture
 		await new Promise((resolve) => {
 			window.setTimeout(resolve, 1e3)
 		})
