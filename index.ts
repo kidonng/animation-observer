@@ -1,6 +1,6 @@
 import type {ParseSelector} from 'typed-query-selector/parser.js'
 
-export interface ObserveOptions {
+export type ObserveOptions = {
 	event?: 'start' | 'end' | 'cancel'
 	duration?: string
 	signal?: AbortSignal

@@ -32,11 +32,9 @@ test('Basic', async ({page, browserName}) => {
 		document.body.append(div)
 	})
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('div')
 
 	const style = page.locator('style')
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.evaluate((style) => style.childNodes.length)).toBe(2)
 })
 
@@ -56,13 +54,10 @@ test('Multiple listeners (:not)', async ({page}) => {
 
 	await page.waitForTimeout(1e3)
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(page.locator('body')).toHaveClass('class1 class2')
 
 	const style = page.locator('style')
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.count()).toBe(1)
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.evaluate((style) => style.childNodes.length)).toBe(3)
 })
 
@@ -98,7 +93,6 @@ test('Multiple selectors (:where)', async ({page}) => {
 		div1.id = 'div1'
 	})
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(page.locator('body')).toHaveClass('div2')
 })
 
@@ -122,11 +116,9 @@ test('End event', async ({page}) => {
 	})
 
 	await page.waitForTimeout(1e3)
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).not.toHaveClass('working')
 
 	await page.waitForTimeout(2e3)
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('working')
 })
 
@@ -149,7 +141,6 @@ test('Cancel event', async ({page}) => {
 	})
 
 	await page.waitForTimeout(1e3)
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).not.toHaveClass('working')
 
 	await page.evaluate(() => {
@@ -157,7 +148,6 @@ test('Cancel event', async ({page}) => {
 	})
 
 	await page.waitForTimeout(1e3)
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('working')
 })
 
@@ -189,11 +179,9 @@ test('Signal', async ({page}) => {
 		document.body.append(div2)
 	})
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(body).toHaveClass('div1')
 
 	const style = page.locator('style')
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(await style.evaluate((style) => style.childNodes.length)).toBe(1)
 })
 
@@ -217,6 +205,5 @@ test('@layer', async ({page}) => {
 
 	await page.waitForTimeout(1e3)
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	await expect(page.locator('body')).toHaveClass('div1')
 })
