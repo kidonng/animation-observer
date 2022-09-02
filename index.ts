@@ -8,7 +8,7 @@ export type ObserveOptions = {
 }
 
 const namespace = 'animation-observer'
-let style: HTMLStyleElement
+let style: HTMLStyleElement | undefined
 
 function createStyle() {
 	if (style) return
@@ -45,9 +45,9 @@ export function observe<
 				animation-duration: ${duration};
 			}
 		}
-		`)
+	`)
 	createStyle()
-	style.append(rule)
+	style!.append(rule)
 
 	document.addEventListener(
 		`animation${event === 'cancel' ? 'start' : event}`,
