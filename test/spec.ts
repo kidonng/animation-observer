@@ -2,10 +2,10 @@ import {env} from 'node:process'
 import {type InlineConfig, build, preview} from 'vite'
 import {test, expect} from '@playwright/test'
 // Only for types, not actually used
-import {observe} from './index.js'
+import {observe} from '../index.js'
 
 const config: InlineConfig = {
-	root: 'fixture',
+	root: 'test',
 	// Prevent Vite error
 	// [vite:reporter] process.stdout.clearLine is not a function
 	logLevel: 'silent',
