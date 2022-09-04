@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  npm-pack:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -12,18 +12,8 @@ jobs:
           node-version: 16
           cache: npm
       - run: npm ci
-      - run: npm run build
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-  test:
+      - run: npm pack
+  npm-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,3 +26,13 @@ jobs:
           npx playwright install
           sudo npx playwright install-deps
       - run: npm test
+  xo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+      - run: npm ci
+      - run: npx xo

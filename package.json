@@ -3,7 +3,6 @@
 	"version": "3.0.0",
 	"description": "Lightweight module to monitor DOM elements matching a CSS selector",
 	"scripts": {
-		"lint": "xo",
 		"prepack": "tsc",
 		"test": "npx playwright test -c test"
 	},
