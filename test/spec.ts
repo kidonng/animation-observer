@@ -52,7 +52,7 @@ test('Multiple listeners (:not)', async ({page}) => {
 		document.body.append(document.createElement('div'))
 	})
 
-	await page.waitForTimeout(1_000)
+	await page.waitForTimeout(1000)
 
 	await expect(page.locator('body')).toHaveClass('class1 class2')
 
@@ -80,14 +80,14 @@ test('Multiple selectors (:where)', async ({page}) => {
 		// Give listener some time to do its thing
 		// Strangely, this throws if put into fixture
 		await new Promise((resolve) => {
-			window.setTimeout(resolve, 1_000)
+			window.setTimeout(resolve, 1000)
 		})
 
 		document.body.classList.remove('div1')
 		div1.id = 'div'
 
 		await new Promise((resolve) => {
-			window.setTimeout(resolve, 1_000)
+			window.setTimeout(resolve, 1000)
 		})
 
 		div1.id = 'div1'
@@ -115,10 +115,10 @@ test('End event', async ({page}) => {
 		document.body.append(document.createElement('div'))
 	})
 
-	await page.waitForTimeout(1_000)
+	await page.waitForTimeout(1000)
 	await expect(body).not.toHaveClass('working')
 
-	await page.waitForTimeout(2_000)
+	await page.waitForTimeout(2000)
 	await expect(body).toHaveClass('working')
 })
 
@@ -140,14 +140,14 @@ test('Cancel event', async ({page}) => {
 		document.body.append(document.createElement('div'))
 	})
 
-	await page.waitForTimeout(1_000)
+	await page.waitForTimeout(1000)
 	await expect(body).not.toHaveClass('working')
 
 	await page.evaluate(() => {
 		document.querySelector('div')!.remove()
 	})
 
-	await page.waitForTimeout(1_000)
+	await page.waitForTimeout(1000)
 	await expect(body).toHaveClass('working')
 })
 
@@ -170,7 +170,7 @@ test('Signal', async ({page}) => {
 		document.body.append(div1)
 
 		await new Promise((resolve) => {
-			window.setTimeout(resolve, 1_000)
+			window.setTimeout(resolve, 1000)
 		})
 		controller.abort()
 
@@ -203,7 +203,7 @@ test('@layer', async ({page}) => {
 		document.body.append(div1, div2)
 	})
 
-	await page.waitForTimeout(1_000)
+	await page.waitForTimeout(1000)
 
 	await expect(page.locator('body')).toHaveClass('div1')
 })
